@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QR Generator Pro</title>
 
+
 <script src="https://cdn.jsdelivr.net/npm/qr-code-styling/lib/qr-code-styling.js"></script>
 <script src="node.js"></script>
 <script src="download.js"></script>
@@ -85,7 +86,7 @@ footer {
   <input type="color" id="fg" value="#000000">
   <input type="color" id="bg" value="#ffffff">
 </div>
-
+<input type="file" id="logoInput" accept="image/*">
 <button onclick="generateQR()">Generate QR</button>
 <button onclick="downloadQR()">Download QR</button>
 
@@ -94,6 +95,7 @@ footer {
 <footer>Made by Lu 😎</footer>
 
 </div>
+
 
 <script>
 let qr;
@@ -111,22 +113,56 @@ function generateQR() {
 
   document.getElementById("qrcode").innerHTML = "";
 
-  qr = new QRCodeStyling({
-    width: parseInt(size),
-    height: parseInt(size),
-    data: text,
-    dotsOptions: {
-      color: fg,
-      type: "rounded"
-    },
-    backgroundOptions: {
-      color: bg
-    },
-    imageOptions: {
-      crossOrigin: "anonymous",
-      margin: 5
-    }
-  });
+let qr;
+
+function generateQR() {
+  let text = document.getElementById("text").value;
+  let size = document.getElementById("size").value;
+  let fg = document.getElementById("fg").value;
+  let bg = document.getElementById("bg").value;
+  let file = document.getElementById("logoInput").files[0];
+
+  if (text === "") {
+    alert("Isi dulu bro!");
+    return;
+  }
+
+  document.getElementById("qrcode").innerHTML = "";
+
+  // Kalau ada logo → convert ke URL
+  if (file) {
+    let reader = new FileReader();
+    reader.onload = function(e) {
+      createQR(e.target.result);
+    };
+    reader.readAsDataURL(file);
+  } else {
+    createQR(null);
+  }
+
+  function createQR(logo) {
+    qr = new QRCodeStyling({
+      width: parseInt(size),
+      height: parseInt(size),
+      data: text,
+      image: logo, // 🔥 ini logo dari upload
+      dotsOptions: {
+        color: fg,
+        type: "rounded"
+      },
+      backgroundOptions: {
+        color: bg
+      },
+      imageOptions: {
+        crossOrigin: "anonymous",
+        margin: 5
+      }
+    });
+
+    qr.append(document.getElementById("qrcode"));
+  }
+}
+
 
   qr.append(document.getElementById("qrcode"));
 }
