@@ -105,33 +105,17 @@ function generateQR() {
   let size = document.getElementById("size").value;
   let fg = document.getElementById("fg").value;
   let bg = document.getElementById("bg").value;
-
-  if (text === "") {
-    alert("Isi dulu bro!");
-    return;
-  }
-
-  document.getElementById("qrcode").innerHTML = "";
-
-let qr;
-
-function generateQR() {
-  let text = document.getElementById("text").value;
-  let size = document.getElementById("size").value;
-  let fg = document.getElementById("fg").value;
-  let bg = document.getElementById("bg").value;
   let file = document.getElementById("logoInput").files[0];
 
-  if (text === "") {
+  if (!text) {
     alert("Isi dulu bro!");
     return;
   }
 
   document.getElementById("qrcode").innerHTML = "";
 
-  // Kalau ada logo → convert ke URL
   if (file) {
-    let reader = new FileReader();
+    const reader = new FileReader();
     reader.onload = function(e) {
       createQR(e.target.result);
     };
@@ -145,7 +129,7 @@ function generateQR() {
       width: parseInt(size),
       height: parseInt(size),
       data: text,
-      image: logo, // 🔥 ini logo dari upload
+      image: logo || undefined,
       dotsOptions: {
         color: fg,
         type: "rounded"
@@ -154,10 +138,9 @@ function generateQR() {
         color: bg
       },
       imageOptions: {
-      crossOrigin: "anonymous",
-      margin: 5,
-      imageSize: 0.4 // max 0.5
-      
+        crossOrigin: "anonymous",
+        margin: 5,
+        imageSize: 0.4
       }
     });
 
@@ -165,10 +148,13 @@ function generateQR() {
   }
 }
 
-
-  qr.append(document.getElementById("qrcode"));
+function downloadQR() {
+  if (!qr) {
+    alert("Generate dulu bro!");
+    return;
+  }
+  qr.download({ name: "qr_code", extension: "png" });
 }
-
 </script>
 
 </body>
